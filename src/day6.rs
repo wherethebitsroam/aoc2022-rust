@@ -5,10 +5,9 @@ use std::{collections::HashSet, error::Error};
 fn distinct(w: &[char]) -> bool {
     let mut hs = HashSet::new();
     for c in w {
-        if hs.contains(c) {
+        if !hs.insert(*c) {
             return false;
         }
-        hs.insert(*c);
     }
     true
 }
