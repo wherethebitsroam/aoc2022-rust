@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use crate::util;
 
 pub fn part1(input: &str) {
@@ -39,7 +41,7 @@ pub fn part1(input: &str) {
     println!("")
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> Result<(), Box<dyn Error>> {
     let mut stacks = vec![
         vec![],
         vec!['N', 'C', 'R', 'T', 'M', 'Z', 'P'],
@@ -57,13 +59,13 @@ pub fn part2(input: &str) {
     for line in util::read_lines(input) {
         if moves {
             let c: Vec<_> = line.split(' ').collect();
-            let count: usize = c[1].parse().expect("bad int");
-            let from: usize = c[3].parse().expect("bad int");
-            let to: usize = c[5].parse().expect("bad int");
+            let count: usize = c[1].parse()?;
+            let from: usize = c[3].parse()?;
+            let to: usize = c[5].parse()?;
 
             let mut tmp = Vec::new();
             for _ in 0..count {
-                let x = stacks[from].pop().expect("empty stack!!");
+                let x = stacks[from].pop().unwrap();
                 tmp.push(x);
             }
 
@@ -80,5 +82,7 @@ pub fn part2(input: &str) {
     for i in 1..stacks.len() {
         print!("{}", stacks[i].last().unwrap())
     }
-    println!("")
+    println!("");
+
+    Ok(())
 }
