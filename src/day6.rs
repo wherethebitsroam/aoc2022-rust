@@ -89,15 +89,41 @@ mod tests {
     }
 
     #[bench]
-    fn bench_find_repeat(b: &mut Bencher) {
+    fn bench_find_repeat_4(b: &mut Bencher) {
         let input = fs::read_to_string("../day6.txt").unwrap();
-        b.iter(|| find_repeat(&input, 14))
+        b.iter(|| find_repeat(&input, 4))
     }
 
     #[bench]
-    fn bench_find_repeat2(b: &mut Bencher) {
+    fn bench_find_repeat_8(b: &mut Bencher) {
+        let input = fs::read_to_string("../day6.txt").unwrap();
+        b.iter(|| find_repeat(&input, 18))
+    }
+
+    #[bench]
+    fn bench_find_repeat_16(b: &mut Bencher) {
+        let input = fs::read_to_string("../day6.txt").unwrap();
+        b.iter(|| find_repeat(&input, 16))
+    }
+
+    #[bench]
+    fn bench_find_repeat2_4(b: &mut Bencher) {
         let input = fs::read_to_string("../day6.txt").unwrap();
         let bytes = input.as_bytes();
-        b.iter(|| find_repeat2(bytes, 14))
+        b.iter(|| find_repeat2(bytes, 4))
+    }
+
+    #[bench]
+    fn bench_find_repeat2_8(b: &mut Bencher) {
+        let input = fs::read_to_string("../day6.txt").unwrap();
+        let bytes = input.as_bytes();
+        b.iter(|| find_repeat2(bytes, 8))
+    }
+
+    #[bench]
+    fn bench_find_repeat2_16(b: &mut Bencher) {
+        let input = fs::read_to_string("../day6.txt").unwrap();
+        let bytes = input.as_bytes();
+        b.iter(|| find_repeat2(bytes, 16))
     }
 }

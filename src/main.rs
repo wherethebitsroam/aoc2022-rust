@@ -9,12 +9,14 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
+mod day8;
 mod util;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let input = fs::read_to_string("../day6.txt")?;
+    let input = fs::read_to_string("../day8.txt")?;
 
-    day6::part2(&input);
+    day8::part2(&input);
 
     Ok(())
 }
