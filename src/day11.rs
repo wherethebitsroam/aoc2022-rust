@@ -18,23 +18,8 @@ impl Op {
 }
 
 #[derive(Debug)]
-struct Item {
-    value: i64,
-    ops: Vec<Op>,
-}
-
-impl Item {
-    fn new(value: i64) -> Self {
-        Self {
-            value,
-            ops: Vec::new(),
-        }
-    }
-}
-
-#[derive(Debug)]
 struct Monkey {
-    items: VecDeque<Item>,
+    items: VecDeque<i64>,
     inspections: usize,
     op: Op,
     div: i64,
@@ -63,29 +48,23 @@ impl MonkeyBusiness {
             while let Some(item) = self.monkeys[i].items.pop_front() {
                 self.monkeys[i].inspections += 1;
 
-                let new = self.monkeys[i].op.apply(item.value) / 3;
+                let new = self.monkeys[i].op.apply(item) / 3;
                 let dest = self.monkeys[i].dest(new);
 
-                self.monkeys[dest].items.push_back(Item::new(new));
+                self.monkeys[dest].items.push_back(new);
             }
         }
     }
 
-    fn round_v2(&mut self) {
+    fn round_v2(&mut self, div: i64) {
         for i in 0..self.monkeys.len() {
-            while let Some(mut item) = self.monkeys[i].items.pop_front() {
+            while let Some(item) = self.monkeys[i].items.pop_front() {
                 self.monkeys[i].inspections += 1;
 
-                item.ops.push(self.monkeys[i].op);
+                let new = self.monkeys[i].op.apply(item) % div;
+                let dest = self.monkeys[i].dest(new);
 
-                let mut v = item.value;
-                for op in item.ops.iter() {
-                    v = op.apply(v) % self.monkeys[i].div;
-                }
-
-                let dest = self.monkeys[i].dest(v);
-
-                self.monkeys[dest].items.push_back(item);
+                self.monkeys[dest].items.push_back(new);
             }
         }
     }
@@ -94,7 +73,7 @@ impl MonkeyBusiness {
 fn test_input() -> MonkeyBusiness {
     let monkeys = vec![
         Monkey {
-            items: VecDeque::from([Item::new(79), Item::new(98)]),
+            items: VecDeque::from([79, 98]),
             inspections: 0,
             op: Op::Mul(19),
             div: 23,
@@ -102,7 +81,7 @@ fn test_input() -> MonkeyBusiness {
             dest_false: 3,
         },
         Monkey {
-            items: VecDeque::from([Item::new(54), Item::new(65), Item::new(75), Item::new(74)]),
+            items: VecDeque::from([54, 65, 75, 74]),
             inspections: 0,
             op: Op::Add(6),
             div: 19,
@@ -110,7 +89,7 @@ fn test_input() -> MonkeyBusiness {
             dest_false: 0,
         },
         Monkey {
-            items: VecDeque::from([Item::new(79), Item::new(60), Item::new(97)]),
+            items: VecDeque::from([79, 60, 97]),
             inspections: 0,
             op: Op::Square,
             div: 13,
@@ -118,7 +97,7 @@ fn test_input() -> MonkeyBusiness {
             dest_false: 3,
         },
         Monkey {
-            items: VecDeque::from([Item::new(74)]),
+            items: VecDeque::from([74]),
             inspections: 0,
             op: Op::Add(3),
             div: 17,
@@ -132,15 +111,7 @@ fn test_input() -> MonkeyBusiness {
 fn input() -> MonkeyBusiness {
     let monkeys = vec![
         Monkey {
-            items: VecDeque::from([
-                Item::new(72),
-                Item::new(64),
-                Item::new(51),
-                Item::new(57),
-                Item::new(93),
-                Item::new(97),
-                Item::new(68),
-            ]),
+            items: VecDeque::from([72, 64, 51, 57, 93, 97, 68]),
             inspections: 0,
             op: Op::Mul(19),
             div: 17,
@@ -148,7 +119,7 @@ fn input() -> MonkeyBusiness {
             dest_false: 7,
         },
         Monkey {
-            items: VecDeque::from([Item::new(62)]),
+            items: VecDeque::from([62]),
             inspections: 0,
             op: Op::Mul(11),
             div: 3,
@@ -156,13 +127,7 @@ fn input() -> MonkeyBusiness {
             dest_false: 2,
         },
         Monkey {
-            items: VecDeque::from([
-                Item::new(57),
-                Item::new(94),
-                Item::new(69),
-                Item::new(79),
-                Item::new(72),
-            ]),
+            items: VecDeque::from([57, 94, 69, 79, 72]),
             inspections: 0,
             op: Op::Add(6),
             div: 19,
@@ -170,14 +135,7 @@ fn input() -> MonkeyBusiness {
             dest_false: 4,
         },
         Monkey {
-            items: VecDeque::from([
-                Item::new(80),
-                Item::new(64),
-                Item::new(92),
-                Item::new(93),
-                Item::new(64),
-                Item::new(56),
-            ]),
+            items: VecDeque::from([80, 64, 92, 93, 64, 56]),
             inspections: 0,
             op: Op::Add(5),
             div: 7,
@@ -185,16 +143,7 @@ fn input() -> MonkeyBusiness {
             dest_false: 0,
         },
         Monkey {
-            items: VecDeque::from([
-                Item::new(70),
-                Item::new(88),
-                Item::new(95),
-                Item::new(99),
-                Item::new(78),
-                Item::new(72),
-                Item::new(65),
-                Item::new(94),
-            ]),
+            items: VecDeque::from([70, 88, 95, 99, 78, 72, 65, 94]),
             inspections: 0,
             op: Op::Add(7),
             div: 2,
@@ -202,7 +151,7 @@ fn input() -> MonkeyBusiness {
             dest_false: 5,
         },
         Monkey {
-            items: VecDeque::from([Item::new(57), Item::new(95), Item::new(81), Item::new(61)]),
+            items: VecDeque::from([57, 95, 81, 61]),
             inspections: 0,
             op: Op::Square,
             div: 5,
@@ -210,7 +159,7 @@ fn input() -> MonkeyBusiness {
             dest_false: 6,
         },
         Monkey {
-            items: VecDeque::from([Item::new(79), Item::new(99)]),
+            items: VecDeque::from([79, 99]),
             inspections: 0,
             op: Op::Add(2),
             div: 11,
@@ -218,7 +167,7 @@ fn input() -> MonkeyBusiness {
             dest_false: 1,
         },
         Monkey {
-            items: VecDeque::from([Item::new(68), Item::new(98), Item::new(62)]),
+            items: VecDeque::from([68, 98, 62]),
             inspections: 0,
             op: Op::Add(3),
             div: 13,
@@ -248,8 +197,9 @@ pub fn part1(_: &str) -> Result<(), Box<dyn Error>> {
 
 pub fn part2(_: &str) -> Result<(), Box<dyn Error>> {
     let mut mb = input();
+    let div: i64 = mb.monkeys.iter().map(|m| m.div).product();
     for _ in 0..10000 {
-        mb.round_v2();
+        mb.round_v2(div);
     }
 
     let mut inspections: Vec<_> = mb.monkeys.iter().map(|m| m.inspections).collect();
