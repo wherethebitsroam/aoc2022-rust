@@ -6,6 +6,8 @@ use std::fs;
 mod day1;
 mod day10;
 mod day11;
+mod day12;
+mod day13;
 mod day2;
 mod day3;
 mod day4;
@@ -17,9 +19,9 @@ mod day9;
 mod util;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let input = fs::read_to_string("../day11.txt")?;
+    let input = fs::read_to_string("../day13.txt")?;
 
-    day11::part2(&input);
+    day13::part2(&input);
 
     Ok(())
 }
