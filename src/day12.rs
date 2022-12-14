@@ -1,11 +1,11 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{hash_map::Entry, HashMap},
     error::Error,
 };
 
 use crate::util;
 
-static test_input: &str = "Sabqponm
+static TEST_INPUT: &str = "Sabqponm
 abcryxxl
 accszExk
 acctuvwj
@@ -17,7 +17,7 @@ fn parse(input: &str) -> Vec<Vec<u8>> {
         .collect()
 }
 
-#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct Loc(usize, usize);
 
 impl Loc {
@@ -33,22 +33,10 @@ impl Loc {
     }
 }
 
-struct Path(HashSet<Loc>);
-
-impl Path {
-    fn new() -> Self {
-        Self(HashSet::new())
-    }
-
-    fn add(&self, loc: &Loc) -> Self {
-        let mut hs = self.0.clone();
-        hs.insert(loc.clone());
-        Self(hs)
-    }
-
-    fn len(&self) -> usize {
-        self.0.len()
-    }
+#[derive(Debug, Clone, Copy)]
+enum Direction {
+    Up,
+    Down,
 }
 
 struct Map {
@@ -79,50 +67,109 @@ impl Map {
         Self { height, start, end }
     }
 
-    fn possible(&self, loc: &Loc) -> impl Iterator<Item = Loc> + '_ {
+    fn possible(&self, loc: &Loc, dir: Direction) -> Vec<Loc> {
         // get the current height
         let h = self.height.get(loc).unwrap();
         loc.next()
             .into_iter()
-            .filter(|l| self.height.get(l).filter(|lh| *lh - *h <= 1).is_some())
-    }
-
-    fn find_paths(&self, loc: &Loc, taken: &Path) -> Vec<Path> {
-        self.possible(&loc)
-            .filter(|l| !taken.0.contains(l))
-            .flat_map(|l| {
-                let t = taken.add(&l);
-                self.find_paths(&l, &t)
+            .filter(|l| match self.height.get(l) {
+                None => false,
+                Some(lh) => match dir {
+                    Direction::Down => *h - 1 <= *lh,
+                    Direction::Up => *h + 1 >= *lh,
+                },
             })
             .collect()
     }
 
-    fn find_paths_from_start(&self) -> Vec<Path> {
-        self.find_paths(&self.start, &Path::new())
+    fn find_path_from_start(&self) -> usize {
+        Hike::hike(&self, &self.start, Direction::Up, |l| l == &self.end).unwrap()
+    }
+
+    fn find_path_from_end(&self) -> usize {
+        Hike::hike(&self, &self.end, Direction::Down, |l| l == &self.start).unwrap()
+    }
+}
+
+struct Hike<'a, F>
+where
+    F: Fn(&Loc) -> bool,
+{
+    map: &'a Map,
+    // map of points that have been reached and how many steps it took
+    seen: HashMap<Loc, usize>,
+    goal: F,
+}
+
+impl<'a, F> Hike<'a, F>
+where
+    F: Fn(&Loc) -> bool,
+{
+    fn hike(map: &'a Map, start: &Loc, dir: Direction, goal: F) -> Option<usize> {
+        let mut seen = HashMap::new();
+        seen.insert(start.to_owned(), 0);
+        let mut hiker = Self { seen, map, goal };
+        hiker.find_path(start, 0, dir)
+    }
+
+    fn find_path(&mut self, loc: &Loc, steps: usize, dir: Direction) -> Option<usize> {
+        let steps = steps + 1;
+        let mut remaining = Vec::new();
+
+        for next in self.map.possible(&loc, dir) {
+            if (self.goal)(&next) {
+                return Some(steps);
+            }
+            let cont = match self.seen.entry(next) {
+                Entry::Occupied(mut e) => {
+                    let x = e.get_mut();
+                    if steps < *x {
+                        // we found a shorter route
+                        *x = steps;
+                        true
+                    } else {
+                        // we already got to this point quicker another way
+                        false
+                    }
+                }
+                Entry::Vacant(e) => {
+                    // first time we got here!
+                    e.insert(steps);
+                    true
+                }
+            };
+
+            if cont {
+                remaining.push(self.find_path(&next, steps, dir));
+            }
+        }
+
+        remaining.into_iter().flatten().min()
     }
 }
 
 pub fn part1(input: &str) -> Result<(), Box<dyn Error>> {
-    let data = parse(test_input);
+    let data = parse(input);
     let map = Map::new(data);
-    let paths = map.find_paths_from_start();
+    let len = map.find_path_from_end();
 
-    for p in paths {
-        println!("len: {}", p.len())
-    }
+    println!("len: {}", len);
     Ok(())
 }
 
 pub fn part2(input: &str) -> Result<(), Box<dyn Error>> {
+    let data = parse(input);
+    let map = Map::new(data);
+
+    let len = Hike::hike(&map, &map.end, Direction::Down, |l| {
+        match map.height.get(l) {
+            Some(h) => *h == 'a' as u8,
+            None => false,
+        }
+    })
+    .unwrap();
+
+    println!("len: {}", len);
+
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test() {
-        assert_eq!(1, 1);
-    }
 }

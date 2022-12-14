@@ -2,7 +2,7 @@ use std::error::Error;
 
 use crate::util;
 
-static test_input: &str = "30373
+static TEST_INPUT: &str = "30373
 25512
 65332
 33549
@@ -94,14 +94,4 @@ pub fn part2(input: &str) -> Result<(), Box<dyn Error>> {
     }
     println!("max_score: {}", max_score);
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test() {
-        assert_eq!(1, 1);
-    }
 }

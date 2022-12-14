@@ -1,4 +1,5 @@
 #![feature(test)]
+#![allow(dead_code)]
 
 use std::error::Error;
 use std::fs;
@@ -19,9 +20,9 @@ mod day9;
 mod util;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let input = fs::read_to_string("../day13.txt")?;
+    let input = fs::read_to_string("../day12.txt")?;
 
-    day13::part2(&input);
+    day12::part2(&input);
 
     Ok(())
 }

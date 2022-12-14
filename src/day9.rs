@@ -2,7 +2,7 @@ use std::{collections::HashSet, error::Error};
 
 use crate::util;
 
-static test_input: &str = "R 4
+static TEST_INPUT: &str = "R 4
 U 4
 L 3
 D 1
@@ -11,7 +11,7 @@ D 1
 L 5
 R 2";
 
-static test_input2: &str = "R 5
+static TEST_INPUT2: &str = "R 5
 U 8
 L 8
 D 3
@@ -133,14 +133,4 @@ pub fn part2(input: &str) -> Result<(), Box<dyn Error>> {
     }
     println!("len: {}", set.len());
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test() {
-        assert_eq!(1, 1);
-    }
 }

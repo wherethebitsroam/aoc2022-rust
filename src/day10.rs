@@ -80,13 +80,3 @@ pub fn part2(input: &str) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test() {
-        assert_eq!(1, 1);
-    }
-}

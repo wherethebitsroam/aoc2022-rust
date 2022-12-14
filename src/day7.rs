@@ -2,7 +2,7 @@ use std::{collections::HashMap, error::Error};
 
 use crate::util;
 
-static test_input: &str = "$ cd /
+static TEST_INPUT: &str = "$ cd /
 $ ls
 dir a
 14848514 b.txt
@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let fs = parse(test_input);
+        let fs = parse(TEST_INPUT);
         assert_eq!(fs.len(), 4);
     }
 }
