@@ -10,6 +10,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
 mod day16;
 mod day2;
 mod day3;
@@ -23,9 +24,9 @@ mod graph;
 mod util;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let input = fs::read_to_string("../day14.txt")?;
+    let input = fs::read_to_string("../day15.txt")?;
 
-    day14::part2(&input)?;
+    day15::part2(&input)?;
 
     Ok(())
 }
