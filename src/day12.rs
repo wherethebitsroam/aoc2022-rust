@@ -3,7 +3,7 @@ use std::{
     error::Error,
 };
 
-use crate::util;
+use crate::{graph::Graph, util};
 
 static TEST_INPUT: &str = "Sabqponm
 abcryxxl
@@ -44,6 +44,7 @@ struct Map {
     end: Loc,
     height: HashMap<Loc, u8>,
 }
+
 impl Map {
     fn new(map: Vec<Vec<u8>>) -> Self {
         let mut start = Loc(0, 0);
@@ -64,6 +65,7 @@ impl Map {
                 height.insert(loc, h);
             }
         }
+
         Self { height, start, end }
     }
 
@@ -83,7 +85,13 @@ impl Map {
     }
 
     fn find_path_from_start(&self) -> usize {
-        Hike::hike(&self, &self.start, Direction::Up, |l| l == &self.end).unwrap()
+        let mut graph = Graph::new();
+        for loc in self.height.keys() {
+            for p in self.possible(loc, Direction::Up) {
+                graph.add_edge(*loc, p, 1);
+            }
+        }
+        graph.shortest_path(&self.start, &self.end).unwrap()
     }
 
     fn find_path_from_end(&self) -> usize {
@@ -116,7 +124,14 @@ where
         let steps = steps + 1;
         let mut remaining = Vec::new();
 
-        for next in self.map.possible(&loc, dir) {
+        let possible = self.map.possible(&loc, dir);
+
+        println!("{:?} ({})->", loc, self.map.height[loc]);
+        for p in possible.iter() {
+            println!("  {:?} ({})", p, self.map.height[&p]);
+        }
+
+        for next in possible {
             if (self.goal)(&next) {
                 return Some(steps);
             }
@@ -151,7 +166,7 @@ where
 pub fn part1(input: &str) -> Result<(), Box<dyn Error>> {
     let data = parse(input);
     let map = Map::new(data);
-    let len = map.find_path_from_end();
+    let len = map.find_path_from_start();
 
     println!("len: {}", len);
     Ok(())

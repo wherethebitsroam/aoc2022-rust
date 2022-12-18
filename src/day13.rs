@@ -23,12 +23,8 @@ impl Ord for Value {
                 ll.len().cmp(&rl.len())
             }
             (Value::Int(li), Value::Int(ri)) => li.cmp(&ri),
-            (Value::List(ll), Value::Int(ri)) => {
-                Value::List(ll.to_vec()).cmp(&Value::List(vec![Value::Int(*ri)]))
-            }
-            (Value::Int(li), Value::List(rl)) => {
-                Value::List(vec![Value::Int(*li)]).cmp(&Value::List(rl.to_vec()))
-            }
+            (Value::List(_), Value::Int(_)) => self.cmp(&Value::List(vec![other.clone()])),
+            (Value::Int(_), Value::List(_)) => Value::List(vec![self.clone()]).cmp(&other),
         }
     }
 }
