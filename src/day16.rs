@@ -1,5 +1,4 @@
 use std::{
-    cmp,
     collections::{HashMap, HashSet},
     error::Error,
 };
