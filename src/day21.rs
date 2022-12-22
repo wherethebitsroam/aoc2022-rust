@@ -53,12 +53,6 @@ impl From<&str> for Op {
     }
 }
 
-// #[derive(Debug, Clone)]
-// enum MonkeyOp {
-//     Num(i64),
-//     Op(usize, Op, usize),
-// }
-
 enum MonkeyOp {
     Num(i64),
     Op(String, Op, String),
