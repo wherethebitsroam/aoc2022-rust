@@ -136,21 +136,21 @@ fn derive_backwards(
         MonkeyOp::Num(_) => panic!("unexpected num arm for, {}", id),
         MonkeyOp::Op(a, op, b) => {
             // expect one of the arms to be derived
-            if let Some(a) = derived.get(a) {
+            if let Some(&a) = derived.get(a) {
                 let v = match op {
-                    Op::Plus => value - *a,
-                    Op::Minus => *a - value,
-                    Op::Mul => value / *a,
-                    Op::Div => *a / value,
+                    Op::Plus => value - a,
+                    Op::Minus => a - value,
+                    Op::Mul => value / a,
+                    Op::Div => a / value,
                 };
 
                 derive_backwards(b, v, ops, derived);
-            } else if let Some(b) = derived.get(b) {
+            } else if let Some(&b) = derived.get(b) {
                 let v = match op {
-                    Op::Plus => value - *b,
-                    Op::Minus => value + *b,
-                    Op::Mul => value / *b,
-                    Op::Div => value * *b,
+                    Op::Plus => value - b,
+                    Op::Minus => value + b,
+                    Op::Mul => value / b,
+                    Op::Div => value * b,
                 };
 
                 derive_backwards(a, v, ops, derived);
@@ -174,10 +174,10 @@ pub fn part2(input: &str) -> Result<(), Box<dyn Error>> {
     derive("root", &ops, &mut derived);
 
     if let MonkeyOp::Op(a, _, b) = &ops["root"] {
-        let result = if let Some(a) = derived.get(a) {
-            derive_backwards(&b, *a, &ops, &derived)
-        } else if let Some(b) = derived.get(b) {
-            derive_backwards(&a, *b, &ops, &derived)
+        let result = if let Some(&a) = derived.get(a) {
+            derive_backwards(b, a, &ops, &derived)
+        } else if let Some(&b) = derived.get(b) {
+            derive_backwards(a, b, &ops, &derived)
         } else {
             panic!("didn't find derived values for {} or {}", a, b);
         };
