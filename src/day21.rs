@@ -129,7 +129,6 @@ fn derive_backwards(
     derived: &HashMap<String, i64>,
 ) -> i64 {
     if id == "humn" {
-        println!("derive_backwards: id: {}, value: {}", id, value);
         return value;
     }
     match &ops[id] {
@@ -144,7 +143,7 @@ fn derive_backwards(
                     Op::Div => a / value,
                 };
 
-                derive_backwards(b, v, ops, derived);
+                derive_backwards(b, v, ops, derived)
             } else if let Some(&b) = derived.get(b) {
                 let v = match op {
                     Op::Plus => value - b,
@@ -153,13 +152,12 @@ fn derive_backwards(
                     Op::Div => value * b,
                 };
 
-                derive_backwards(a, v, ops, derived);
+                derive_backwards(a, v, ops, derived)
             } else {
                 panic!("didn't find derived values for {} or {}", a, b);
             }
         }
     }
-    0
 }
 
 pub fn part2(input: &str) -> Result<(), Box<dyn Error>> {
