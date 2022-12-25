@@ -33,7 +33,7 @@ mod graph;
 mod util;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let input = fs::read_to_string("../day25.txt")?;
-    day25::part1(&input)?;
+    let input = fs::read_to_string("../day19.txt")?;
+    day19::part2(&input)?;
     Ok(())
 }
